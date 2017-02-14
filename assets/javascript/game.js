@@ -1,92 +1,138 @@
-$(document).ready(function() {
+var crystal = {
+	blue: 
+	{
+		name: "Blue",
+		value: 0
+	},
+	green:
+	{
+		name: "Green",
+		value: 0
+	},
+	red:
+	{
+		name: "Red",
+		value: 0
+	},
+	yellow:
+	{
+		name: "Yellow",
+		value: 0
+	}
+};
 
-	crystals = ['assets/images/polygoncrystal.jpg','assets/images/diamondcrystal.jpg','assets/images/octagoncrystal.jpg','assets/images/squarecrystal.jpg'];
+var currentScore = 0;
 
-	var counter = 0;
-	var wins = 0;
-	var losses = 0;
+var targetScore = 0;
 
-	$('#myWins').text(wins);
-	$('#myLosses').text(losses);
-	
-	newCrystals();
-	newGame();
+var winCount = 0;
 
-	function newCrystals () {
-		var numbers = []
-			while(numbers.length < 4){
-			  var randomnumber = Math.ceil(Math.random()*12)
-			  var found = false;
-			  for (var i=0; i< numbers.length; i++){
-				if (numbers[i] == randomnumber){
-					found = true; break
-				}
-			  }
-			  if(!found)numbers[numbers.length]=randomnumber;
-			}
-		console.log(numbers);		
+var lossCount = 0;
 
-		for (i = 0; i < numbers.length; i++) {
-			var imageCrystal = $('<img>');
-			imageCrystal.attr('data-num', numbers[i]);
-			imageCrystal.attr('src', crystals[i]);
-			imageCrystal.attr('alt', 'crystals');
-			imageCrystal.addClass('crystalImage')
-			$('#crystals').append(imageCrystal);
-		}
+
+
+// functions
+
+var getRandom = function(min, max) {
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+var startGame = function() {
+
+	// reset current score
+
+	currentScore = 0
+
+	// set new target score between 19 and 120
+
+	targetScore = getRandom(19,120);
+
+	// set different values for crystals between 1-12
+
+	crystal.blue.value 		= getRandom(1, 12);
+	crystal.red.value 		= getRandom(1, 12);
+	crystal.green.value 	= getRandom(1, 12);
+	crystal.yellow.value 	= getRandom(1, 12);
+
+	// change html to reflect all of these changes
+	$("#yourScore").html(currentScore);
+	$("#targetScore").html(targetScore);
+
+	// testing console
+	console.log("-------------")
+	console.log("Target Score: " + targetScore);
+	console.log("Blue: " + crystal.blue.value + " | Green: " + crystal.green.value + " | Red: " + crystal.red.value + " | Yellow: " + crystal.yellow.value);
+	console.log("-------------")
+}
+
+// respond to clicks on the crystals
+
+var addValues = function(crystal) {
+
+	// change currentScore
+	currentScore = currentScore + crystal.value;
+
+	// change the HTML to reflect changes in currentScore
+	$("#yourScore").html(currentScore);
+
+	// Call the checkwinfunction
+	checkWin();
+
+
+// testing console
+	console.log("Your Score: " + currentScore);
+}
+
+// check if user won or lost and reset the game
+var checkWin = function() {
+
+	// Check if currentScore is larger than targetScore
+	if(currentScore > targetScore) {
+		alert("You Lost!");
+		console.log("You Lost");
+
+		// add to loss counter
+		lossCount++
+
+		// Change loss count
+		$("#lossCount").html(lossCount);
+
+		// restart the game
+		startGame();
 	}
 
-	function newGame() {
+	else if (currentScore == targetScore) {
+		alert("Congrats, you win!");
+		console.log("You win");
 
-		counter = 0;
-		$('#yourScore').text(counter);
+		// add to win counter
+		winCount++
 
-		function randomIntFromInterval(min,max){
-		   	return Math.floor(Math.random()*(max-min+1)+min);
-			}
+		// Change the win count
+		$("#winCount").html(winCount);
 
-		var numberToGuess = randomIntFromInterval(19,120);
-
-		$('.value').text(numberToGuess);
-
-
-		$('.crystalImage').on('click', function(){
-		    counter = counter + parseInt($(this).data('num'));
-		   
-		    $('#yourScore').text(counter);
-
-		    if (counter == numberToGuess){
-		      $('#status').text('You won!');
-		      wins ++;
-		      $('#myWins').text(wins);
-		      console.log(wins)
-		      $('#crystals').empty();
-		      newCrystals();
-		      newGame();
-		        
-		    } else if ( counter > numberToGuess){
-		        $('#status').text('You lost!')
-		        losses ++;
-		        $('#myLosses').text(losses);
-		        console.log(losses)
-		        $('#crystals').empty();
-		        newCrystals();
-		        newGame();
-		    }
-		});
+		// Restart the game
+		startGame();
 	}
 
+}
+// main process
+
+// 
+startGame();
+
+$("#blue").click(function() {
+	addValues(crystal.blue);
 });
 
-// create the game object with javascript
+$("#red").click(function() {
+	addValues(crystal.red);
+});
 
-// set the random value of the crystals
+$("#green").click(function() {
+	addValues(crystal.green);	
+});
 
-// append/add additional values until counter === numberToGuess
-
-
-
-
-// Utilize jquery to perform logic onto the html & css
-
-// create an if for counter === numberToGuess and else if for counter > numberToGuess
+$("#yellow").click(function() {
+	addValues(crystal.yellow);
+});
